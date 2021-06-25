@@ -202,7 +202,7 @@ rails server -b 0.0.0.0
 
 You will see that we are using the Puma webserver and that it is running on port 3000. 
 
-At the top of your Codio window, you will see a dropdown menu titled "Project Index (static)". Click the white downward pointing arrow and select "Box URL". You will be transported to a new browser tab and you should see a message that says "Yay! You're on Rails!".  
+At the top of your Codio window, you will see a dropdown menu titled "Project Index (static)". Click the white downward pointing arrow and set it to be "New Browser Tab" and not "Inside Codio" and then select "Box URL". You will be transported to a new browser tab and you should see a message that says "Yay! You're on Rails!".  This is what the dropdown should look like in Codio: ![](box-url.png)
 
 If you don't get the "Yay!" message, now is the time to figure out what you didn't do correctly above.  You can open multiple terminals in Codio.  This allows you to do work in one terminal while your server runs in the other terminal.
 
