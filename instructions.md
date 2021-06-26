@@ -1037,7 +1037,7 @@ Okay, so this has been a lot of material to cover.  So far, we've seen how to:
 + How to send data from the controller to the view via an instance variable
 + How to code up a basic version of creating a new instance of a model and save it to the database. This includes the concept of only permitting a specific set of params to be permitted, and how to use `form_with` and a model to generate the proper HTML form in the view.
 + Read messages from the `flash` hash.  (Setting them is simple: `flash[:notice] = "This is a notice"`, for example).
-+ How to modify our app's layout to affect all pages of the up.
++ How to modify our app's layout to affect all pages of the app.
 
 In other words, we've handled the C and R of CRUD, and now we shall tackle the U and D.
 
