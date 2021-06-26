@@ -263,7 +263,7 @@ You'll get the following output:
 ```
 You can ignore the files created in the `test` directory.  You will have a different number in front of your _create_books.rb file.  That number is a timestamp.
 
-What you've done is make a "migration". This is a ruby script for making changes to the database. The beauty of this is that all of our work on the database is recorded in scripts that can be replayed to build a system exactly the same way on other machine, for example in our deploy version in the cloud on Heroku.
+What you've done is make a "migration". This is a ruby script for making changes to the database. The beauty of this is that all of our work on the database is recorded in scripts that can be replayed to build a system exactly the same way on another machine, for example in our deploy version in the cloud on Heroku.
 
 The migration can be found in `db/migrate/` in the specific file output in your terminal. Go open that file, and you will see:
 
