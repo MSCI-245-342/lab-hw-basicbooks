@@ -672,7 +672,7 @@ The view has access to the `@books` instance variable we made in the controller.
 
 Go to /books on the website and see that it works.
 
-For the 'show' action, recall that the route will be /books/id where id is a number.  Rails will grab the number and put it in the params hash with the key `:id`.  Let's see if this is true.
+For the 'show' action, recall that the route will be /books/id where id is a number.  Rails will grab the number and put it in the `params` hash with the key `:id`. (The `params` object is automatically created by Rails on every HTTP request.  It contains data from the URL's "query string" and any data POSTed via an HTML form.  All of the data is made available to us as key value pairs in the `params` hash. Strictly speaking, the `params` object is not a hash, but for the most part, it behaves like one for accessing data. For more information, [read this guide about params](https://guides.rubyonrails.org/action_controller_overview.html#parameters).)  Let's see this process work with an example.
 
 In the controller, put the following in the show action handler:
 ```
