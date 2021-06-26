@@ -902,7 +902,7 @@ We can gain access these values as follows (do this in the debugger):
 (byebug) book_params[:rating]
 "3"
 ```
-We use the `params.require(:book).permit(:title, :author, :rating)` call to say "we must have a `:book` key and the only permitted parameters for it are title, author, and rating.  This is a way for us to avoid people trying to hack us by posting invalid forms to our web app.
+We use the `params.require(:book).permit(:title, :author, :rating)` call to say "we must have a `:book` key and the only permitted parameters for it are title, author, and rating."  This is a way for us to avoid people trying to hack us by posting invalid forms to our web app.
 
 To exit the debugger, type continue.
 
