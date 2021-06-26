@@ -8,6 +8,9 @@ This lab and homework assignment are designed to get you familiar with:
 + How to return a simple HTML page
 + How to return data from the database
 + How to POST an HTML FORM and view the data in Rails
++ How to implement CRUD operations.
++ How to generate links using `link_to`.
++ How to deploy to production on Heroku.
 
 ## Lab and Homework
 
@@ -525,7 +528,7 @@ Notice the routes that include an ":id".  For example GET movies/1 will be a req
 
 The "Prefix" means that Rails will make available in the controller, and the view, special helper methods that will return the path for the route.  For example there will be `books_path` and it will return "/books" and `new_book_path` will return "/books/new".  It is much better practice to call these helper methods rather than type the path directly.  In addition to these "_path" methods, there are also made "_url" methods, for example: books_url, new_book_url, etc.  These return the full url to the web page, for example: https://lola-concert-3000.codio.io/books .  We'll most often use the "_path" methods to produce relative paths.  The "_url" methods are used when we need to do a "redirect" in the controller.
 
-# 3. A controller and views for movies.
+# A controller and views for movies.
 
 We can ask Rails to make us a controller with the actions we need.  For a resource controller, we also use the plural form of the resource.  Do:
 ```
@@ -923,13 +926,360 @@ Now go to your browser, go to `/books/new` and submit the form with your Animal 
 
 Cool, eh?
 
-### Commit and push
+There is actually quite a lot going on in the `create` method.  
+
+Because we used the code `params.require(:book).permit(:title, :author, :rating)` to carefully make sure only authorized parameters were passed to the `book_params` variable, we can pass the whole `book_params` to `Book.new` to set the `title:`, `author:`, and `rating:` values of the book object that we initialize.  If you don't do this, you need to pass in these parameters individually.  It is a best security practice to always do the `params.require` and `permit` code.
+
+If we are able to successfully save the book to the database (`if @book.save`) then we send a `redirect` back to the user's browser and set the `flash[:notice]` hash value to 'Book was succcessfully created.'  If we cannot save to the DB, then we `render` the `new` view.
+
+A redirect is a special HTTP response that we can send back to the user's browser instead of HTML.  The redirect tells the user's browser "please go to this URL".  This happens seamlessly and the user never knows that they've been "redirected".  When the user is redirected, their browser does a HTTP GET of the given url.
+
+Some usage notes about redirect_to:
+
++ In Rails, views are tied to the controller and have the same name as the action and are automatically rendered at the end of the action unless there has been another call to `render` or `redirect_to`.  Note that execution of the action method [does not stop after a call to render or redirect_to](https://guides.rubyonrails.org/layouts_and_rendering.html#using-render).  These methods merely work on building the response to the browser.  Thus, this is why we must have a `return` after the `redirect_to`, because otherwise we will still attempt to render a view for the `create` action, which makes no sense.  
+
++ When we do a redirect, we should supply a full url, e.g. http://www.example.com/books and not merely a relative path such as /books. Thus, if you need to `redirect_to` a location, use the `_url` helpers rather than the `_path` helpers.  For example, do `redirect_to books_url` rather than `redirect_to books_path`.  
+
+#### Why we redirect
+In `create` you will see that on successfully saving to the DB, we `redirect_to` another page, and in when failure occurs, we use `render` to display a template.  While we haven't written the `update` and `destroy` methods yet in the BookController, we will also use a `redirect_to` after successfully changing the database. All of these actions (create, update, destroy) are designed to modify the database and change the state of the app.  If successful and we stay on the same page, the user could hit refresh in their browser and be prompted to submit the POST request again.  This could cause problems, especially for situations such as placing orders in a commerce app, or debiting an account in an banking app.  With the `redirect_to`, the user will already have done a new request to a benign read only route, and a refresh causes no harm.  This [stackoverflow post about render vs. redirect](https://stackoverflow.com/questions/7493767/are-redirect-to-and-render-exchangeable) is a good read to explain this issue.
+
+#### Rails magic and path/url helpers again
+
+This code: 
+
+```ruby
+redirect_to @book
+```
+
+seems mysterious.  How in the world does `redirect_to` know what to do?  Short answer is that with RESTful routes and following the naming conventions, rails can figure out that if @book has an id of 6, than it should redirect to a url with /books/6 .  If this bothers you (it kinda bothers me), you can always call `book_url(@book)`, which at least shows that we're using a method that we know should produce a url to /books/id where the id will come from the Book object we pass in to the method `book_url`.
+
+You can get access to the helper methods produced by your routes in the `rails console` by using the `app` object. For example:
+
+```
+codio@lola-concert:~/workspace/basicbooks$ rails console
+Loading development environment (Rails 6.1.4)
+3.0.1 :001 > b = Book.first
+  Book Load (0.2ms)  SELECT "books".* FROM "books" ORDER BY "books"."id" ASC LIMIT $1  [["LIMIT", 1]]
+ => 
+#<Book:0x00005581d5c06988
+... 
+3.0.1 :002 > app.book_path(b)
+ => "/books/1" 
+3.0.1 :003 > app.book_url(b)
+ => "http://www.example.com/books/1" 
+3.0.1 :004 > 
+```
+
+So you can at least play with these helper methods to see how they work. 
+
+### Understanding render and flash
+
+Okay, so that explains the `redirect_to`, but we still need to talk about the `flash[:notice]` and the `render :new`.
+
+The [documentation for redirect_to](https://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to) explains that a `notice:` argument will set `flash[:notice]` to the string you provide.
+
+What is the `flash` hash?  The [flash (click to read docs)](https://api.rubyonrails.org/classes/ActionDispatch/Flash.html) is a special hash that allows you to record a string and have it made available to you on the *next* request that a user makes to your app.  Thus, when we redirect the user, they make another request with their browser for the given url and then we'll have anything we stuffed in the `flash` hash available to us.  On the user's next request, the `flash` will be emptied out, unless we've put new values into it.  
+
+If you go to `/books/new` and create a new book, you will notice that there is no message shown telling us the method was successful.  The lack of the message is because we haven't put any code into our views to display the flash message.
+
+An easy way to handle flash messages, is to put some code into our application's layout view.  
+
+Edit `app/views/layouts/application.html.erb` to have inside the html `<body></body>` this code:
+
+ ```erb
+  <body>
+    <%# Modified from: https://stackoverflow.com/questions/9390778/best-practice-method-of-displaying-flash-messages %>
+    
+    <% flash.each do |key, value| %>
+      <%= content_tag :div, value, id: "#{key}" %>
+    <% end %>      
+      
+    <%= yield %>
+  </body>
+ ```
+Now our app mechanism will always display flash messages on any page.
+
+Go to `/books/new` and create a new book and verify that it works.
+
+### Some CSS
+
+It'd be nice if these messages were formatted nicer.  Edit `app/assets/stylesheets/application.css` to have in it after the comments:
+```css
+#notice {
+  color: green; 
+  border: 2px solid green; 
+  width: fit-content;
+  padding: 7px ; }
+
+#alert {
+  border: 2px solid red; 
+  width: fit-content;
+  padding: 7px ; }
+```
+
+Now, any `flash[:notice]` or `flash[:alert]` messages will standout better.
+
+Go make another book at `/books/new` to verify that it works.
+
+As the comments in `application.css` explain, you can put CSS in this file to have it available to your whole app.
 
 If you haven't done it recently, commit and push your code to GitHub to back it up.
 
-# More forthcoming
+## Where we're at
 
-This homework will be updated and will contain more steps and actual work to hand in.  Once updated, this will be announced to Campuswire.
+Okay, so this has been a lot of material to cover.  So far, we've seen how to:
+
++ How to setup a new Rails app from scratch.
++ Create a model
++ Create dev data and load it into the database
++ How to make the default set of routes for a resource
++ How to generate a controller
++ How to send data from the controller to the view via an instance variable
++ How to code up a basic version of creating a new instance of a model and save it to the database. This includes the concept of only permitting a specific set of params to be permitted, and how to use `form_with` and a model to generate the proper HTML form in the view.
++ Read messages from the `flash` hash.  (Setting them is simple: `flash[:notice] = "This is a notice"`, for example).
++ How to modify our app's layout to affect all pages of the up.
+
+In other words, we've handled the C and R of CRUD, and now we shall tackle the U and D.
+
+## Update
+
+Updating an existing model instance is very similar to creating a new model instance.
+
+Like creating a new intance, editing is a two step process.  First, the user send a GET request to `/books/id/edit` where `id` is replace with the numeric id of the book in the DB.  Our response to this GET request is to return an HTML form filled out with the current instance so that they can edit it.
+
+While this could be tedious, Rails makes it quite simple for us.
+
+Let's start with our view for the edit action.  Edit the `app/views/books/edit.html.erb` view to be:
+```erb
+<h1>Edit an existing Book</h1>
+
+<%= form_with(model: @book, local: true) do |form| %>
+  <div>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :author %>
+    <%= form.text_field :author %>
+  </div>
+
+  <div>
+    <%= form.label :rating %>
+    <%= form.number_field :rating %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+```
+Compare this view to the new.html.erb view.  What do you see?
+
+Well, you'll see the `form_with` is identical in both views.  In a future homework, we'll show the use of "partials" to save us from duplicating work across views.
+
+How can the same code work for creating a new book and editting an existing book?  In each case we pass in a book via @book.  For creating a book, the @book has never been persisted to the DB.  For editing a book, the @book will be an object that we've fetch from the DB and it will know it has previously been persisted.
+
+Okay, so we need to fix up our books controller:
+```ruby
+  def edit
+    @book = Book.find params[:id]
+  end
+```
+Recall that the route is `/books/:id/edit` and Rails will send us the value in the route for :id as params[:id].  So, this code fetches the book from the database, and then renders the `edit.html.erb` view.  (Reminder: Don't just copy and paste this code.  You need to edit the existing `edit` method. Ruby will let you have two methods with the same name in a class.  Don't do that.)
+
+Okay, go to `/books/1/edit` in your browser and see what you see.  You should see the form populated with the values for the book with id=1.  If you do not, be sure you've saved your controller code.
+
+View the source code in the browser (right click and select "View page source").
+
+You'll see the HTML form is like:
+```html
+<form action="/books/1" accept-charset="UTF-8" method="post">
+<input type="hidden" name="_method" value="patch" />
+```
+As mentioned in lecture, HTML does not allow us to send a PATCH request, but Rails has included a bit of code to tells Rails that this POST to `/books/1` is really a PATCH.
+
+Okay, here is the code to handle the PATCH request in the controller:
+
+```ruby
+  def update
+    @book = Book.find params[:id]
+    book_params = params.require(:book).permit(:title, :author, :rating)
+    if @book.update(book_params)
+      redirect_to @book, notice: 'Book was successfully updated.'
+      return
+    else
+      render :edit
+    end
+  end
+```
+
+Go to your web browswer and to `/books/1/edit` and see if you can edit it.  Try out some other ids, too.
+
+Don't forget to commit your code frequently.
+
+## Destroy
+
+When we receive a DELETE http request to a path like `/books/1`, it tells us the user wants to delete the book with id=1.  Our route for this is (`rails routes` to see routes):
+```
+   Prefix Verb   URI Pattern               Controller#Action
+          DELETE /books/:id(.:format)      books#destroy
+```
+So, we should get what to do:
++ In BooksController#destroy, get the book with `params[:id]` from the database, and then destroy it.
++ After destroying the book, we must `redirect_to` another page to avoid the user accidentally request to delete the book more than once.  
+
+Okay, so here is our code for the controller:
+```ruby
+  def destroy
+    @book = Book.find params[:id]
+    @book.destroy
+    redirect_to books_url, notice: 'Book was successfully destroyed.'
+  end
+```
+
+How can we test this out?  We need to modify our app to let us select a book for deletion.  We'll do this by modifying the `index.html.erb` view that lists all of the books.
+
+```erb
+<h1>Books</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th colspan=3></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @books.each do |book| %>
+      <tr>
+         <td><%= book.title %></td>
+         <td><%= form_with model: book, local: true, method: 'delete' do |f| %>
+                 <%= f.submit "Delete" %>     
+             <% end %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+```
+In the above, we've also moved to a table layout to make everything look nicer. 
+
+You can see that we again have used `form_with` a model, but we've specified here that the `method` of the form should be a `delete`.  Rails knows what to do and will generate a form that POSTs to the correct path for deleting a book and will include the correct information such that it is interpretted as a DELETE for the purposes of routing the request.
+
+Update your index.html.erb view and try deleting some of your books in the browser by going to `/books`.
+
+## Links
+
+Our app is missing some helpful links.  For example, it would be very nice to be able to click on the title of a book to see its details.
+
+Rails has a method [`link_to` (click for docs)](https://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#method-i-link_to) that is very helpful for creating links.  
+
+The general form is to give it the text to display and then the path to link to.  For example, we can modify the index.html.erb view by changing:
+```erb
+         <td><%= book.title %></td>
+```
+to
+```erb
+         <td><%= link_to book.title, book_path(book) %></td>
+```         
+where `book_path(book)` is again another use of these helper methods discussed previously.
+
+When you have it working, be sure to git commit and push again.
+
+## Homepage
+
+In the [Ruby on Rails Tutorial, 6th Edition](https://ocul-wtl.primo.exlibrisgroup.com/permalink/01OCUL_WTL/1jjglgg/alma999986595715005162) in section 3.2.1, the author outlines how to generate a contoller for a homepage, which I base the following instruction on.
+
+Generate a StaticPages controller:
+```
+rails generate controller StaticPages home --skip-routes
+```
+
+In your `config/routes.rb` file, add this route:
+
+```ruby
+root to: 'static_pages#home'
+```
+
+This says that '/' should go to the static_pages controller and run the `home` action.  
+
+Now you can edit the `app/views/static_pages/home.html.erb` view to add links, etc. to the various parts of your app.
+
+If you click on your "Box URL" and go to `/`, you should see the default content for your view rather than the "Yay! I'm on Rails" page.
+
+# Tasks
+
+The app still needs some finishing touches.  Complete the following tasks:
+
+1. Using ERB and the `link_to` and path "helper methods" such as `books_path` create a simple homepage for your app that has "BasicBooks" in a nice `<h1>` heading, has your name displayed, and has a link to the list of books (`/books`).
+
+2. At the bottom of the `/books` page, provide a link back to 'Home' (`/`).
+
+3. At the bottom of the "show book" page (`/books/id`), provide links to Home (`/`) and the list of books (`/books`).
+
+4. As part of the display of books at `/books`, also display the author and rating in the table.
+
+5. On the "show book" page (`/books/id`), provide a link to "Edit this book" that links to `/books/id/edit` for that book.
+
+6. Change the order of the books in the `/books` page to be in alphabetical order by title.  Hint: You should change Book.all in the BooksController to order the books by title.  See the guide to [ActiveRecord Querying](https://edgeguides.rubyonrails.org/active_record_querying.html#ordering).
+
+7. Change the "Delete" functionality as follows
+   + Remove the buttons to delete books from the `/books` page.
+   + Add a link to the bottom of the "show book" (`/books/id`) page that links to a new page.  The link should say "Delete Book".
+   + On the new page (where the "Delete Book" link takes the user for the book), provide text that asks if the user wants to delete the book, and then has a "Delete" button that will delete the book.  This page should have a link with text "Cancel Delete" that takes the user back the the `/books/id` page for that book.  
+   + For example, if I was on the page `/books/1` for the book "Dune", at the bottom of that page would be a link with text "Delete Book".  When I click on the link, I would be on a new page, that asks me if I really want to delete "Dune".  If I click the "Delete" button, then "Dune" is deleted.  If I click instead on "Cancel Delete", I am taken back to the page for "Dune".
+   + Hint: Both "create" and "update" actions have actions that generate a page with an HTML form that is then submitted to "create" and "update".  Why shouldn't "delete" get its own dedicated page to host the form that deletes a book? You can add a new route to the routes, for example: 
+   ```ruby
+   get 'books/:id/confirm_delete', to: 'books#confirm_delete', as 'confirm_delete_book'
+   ```
+   + You will not use a `rails generate` command, for you already have a controller to use (BooksController).  You can manually create the views file you need in `/app/views/books`.
+
+1. Copy the format of the README.md from your previous homework and update the README.md in this repository as appropriate for this homework.
+
+1. Git add, commit, and push all of your code to GitHub.
+
+1. Finally, deploy your app to Heroku.  The directions for this task follow.
+
+## Deploying to Heroku
+
+Acknowledgement: Portions of these instructions for Heroku are copied and modified from Armando Fox's Sinatra assignment.
+
+Heroku is a cloud platform-as-a-service (PaaS) where we can deploy our app for the whole world to use.  When we deploy our app, we are deploying the "production" version.
+
+If you don't have an account yet, go sign up at http://www.heroku.com. You'll need your login and password for the next step.
+
+We already have the Heroku CLI (command line interface) installed for you on Codio.
+
+Log in to your Heroku account by typing the command: `heroku login -i` in the terminal. This will connect you to your Heroku account.
+
+While in the root directory of your rails app (basicbooks)  type 
+```
+heroku apps:create basicbooks-watiamUsername
+``` 
+to create a new project in Heroku.  Replace "watiamUsername" with your WatIAM username.  This will tell the Heroku service to prepare for some incoming code, and locally it will add a remote git repository for you called `heroku`.  Detailed [instructions](https://devcenter.heroku.com/articles/creating-apps).
+
+Before doing anything else, record the URL that Heroku provides telling you where to access your app on the web.
+
+Next, make sure you stage and commit all changes locally as instructed above (i.e. `git add`, `git commit`, `git push`).
+
+Run `git status` to verify you haven't forgotten to commit something.  We send the whole git repo to Heroku, and if you haven't committed something, it doesn't go!
+
+Your local repo is now ready to deploy to Heroku. To deploy, push the repo to Heroku:
+
+```
+git push heroku main
+```
+This will build the production version of your app on Heroku.  We also need to create and migrate the database on Heroku:
+```
+heroku run rails db:migrate
+```
+We do not do `db:create` because Heroku goes ahead and creates the database for us.  If we had seed data, we would also do:
+```
+heroku run rails db:seed
+```
+
+The git push will have created a running instance of your app at some URL ending with `herokuapp.com`. Enter that URL in a new browser tab to see your app running live. Congratulations, you did it--your app is live on the world wide web!
+
+Be sure to test out that your app seems to work on Heroku.  If you get a message that "We're sorry, but something went wrong. If you are the application owner check the logs for more information." then this almost always means that you forgot to run `heroku run rails db:migrate`.
 
 
 
