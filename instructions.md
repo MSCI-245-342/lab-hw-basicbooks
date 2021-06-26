@@ -1214,6 +1214,8 @@ The app still needs some finishing touches.  Complete the following tasks:
 
 2. At the bottom of the `/books` page, provide a link back to 'Home' (`/`).
 
+3. At the bottom of the `/books` page, provide a link to 'Add a Book' (`/books/new`).
+
 3. At the bottom of the "show book" page (`/books/id`), provide links to Home (`/`) and the list of books (`/books`).
 
 4. As part of the display of books at `/books`, also display the author and rating in the table.
