@@ -1078,7 +1078,7 @@ Compare this view to the new.html.erb view.  What do you see?
 
 Well, you'll see the `form_with` is identical in both views.  In a future homework, we'll show the use of "partials" to save us from duplicating work across views.
 
-How can the same code work for creating a new book and editting an existing book?  In each case we pass in a book via @book.  For creating a book, the @book has never been persisted to the DB.  For editing a book, the @book will be an object that we've fetch from the DB and it will know it has previously been persisted.
+How can the same code work for creating a new book and editting an existing book?  In each case we pass in a book via `@book`.  For creating a book, the `@book` has never been persisted to the DB.  For editing a book, the `@book` will be an object that we've fetched from the DB and it will know it has previously been persisted.
 
 Okay, so we need to fix up our books controller:
 ```ruby
