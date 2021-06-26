@@ -879,7 +879,7 @@ In byebug, enter `params` to view the contents of the params variable.
 
 The params variable is of type `ActionController::Parameters` and is displayed to us as a hash.  The keys and values of the hash are:
 
-+ authenticity_token" =>  some super long string
++ "authenticity_token" =>  some super long string
 + "book"=>{"title"=>"Animal Farm", "author"=>"George Orwell", "rating"=>"3"}
 + "commit"=>"Create Book", 
 + "controller"=>"books", 
