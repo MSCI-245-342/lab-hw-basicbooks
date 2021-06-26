@@ -978,7 +978,7 @@ Okay, so that explains the `redirect_to`, but we still need to talk about the `f
 
 The [documentation for redirect_to](https://api.rubyonrails.org/classes/ActionController/Redirecting.html#method-i-redirect_to) explains that a `notice:` argument will set `flash[:notice]` to the string you provide.
 
-What is the `flash` hash?  The [flash (click to read docs)](https://api.rubyonrails.org/classes/ActionDispatch/Flash.html) is a special hash that allows you to record a string and have it made available to you on the *next* request that a user makes to your app.  Thus, when we redirect the user, they make another request with their browser for the given url and then we'll have anything we stuffed in the `flash` hash available to us.  On the user's next request, the `flash` will be emptied out, unless we've put new values into it.  
+What is the `flash` hash?  The [flash (click to read docs)](https://guides.rubyonrails.org/action_controller_overview.html#the-flash) is a special hash that allows you to record a string and have it made available to you on the *next* request that a user makes to your app.  Thus, when we redirect the user, they make another request with their browser for the given url and then we'll have anything we stuffed in the `flash` hash available to us.  On the user's next request, the `flash` will be emptied out, unless we've put new values into it.  
 
 If you go to `/books/new` and create a new book, you will notice that there is no message shown telling us the method was successful.  The lack of the message is because we haven't put any code into our views to display the flash message.
 
