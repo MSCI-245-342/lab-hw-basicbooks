@@ -1200,7 +1200,7 @@ In your `config/routes.rb` file, add this route:
 root to: 'static_pages#home'
 ```
 
-This says that '/' should go to the static_pages controller and run the `home` action.  
+This says that '/' (also known as "root") should go to the static_pages controller and run the `home` action.  
 
 Now you can edit the `app/views/static_pages/home.html.erb` view to add links, etc. to the various parts of your app.
 
