@@ -461,7 +461,7 @@ Then do:
 ```
 Book.all.limit(2)
 ```
-To ask the Book model for all of the books.  Notice how this is turned into SQL for you: `SELECT "books".* FROM "books" LIMIT $1  [["LIMIT", 2]]`.
+To ask the Book model for all of the books but limit the result to just the first two rows.  Notice how this is turned into SQL for you: `SELECT "books".* FROM "books" LIMIT $1  [["LIMIT", 2]]`.
 
 To find the book with an id of 1, do:
 ```
