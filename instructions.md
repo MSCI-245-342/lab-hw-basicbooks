@@ -1045,7 +1045,7 @@ In other words, we've handled the C and R of CRUD, and now we shall tackle the U
 
 Updating an existing model instance is very similar to creating a new model instance.
 
-Like creating a new intance, editing is a two step process.  First, the user send a GET request to `/books/id/edit` where `id` is replace with the numeric id of the book in the DB.  Our response to this GET request is to return an HTML form filled out with the current instance so that they can edit it.
+Like creating a new intance, editing is a two step process.  First, the user send a GET request to `/books/id/edit` where `id` is replaced with the numeric id of the book in the DB.  Our response to this GET request is to return an HTML form filled out with the current instance so that they can edit it.
 
 While this could be tedious, Rails makes it quite simple for us.
 
