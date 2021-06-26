@@ -371,7 +371,7 @@ Go into the database with `psql -d basicbooks_development` and verify that the b
 
 It it handy for development to get some data in the database before proceeding.
 
-Rails maintains 3 different environments: development, test, and production.  The development environment is setup for us to write code and play around with our database as needed.  We'll put data in the database in ways that help us develop the app faster.  The test environment is specially for the automated tests to use.  We do not touch the test database.  The production environment is for when we deploy our app to a server for others to use.  The only data we want to add to  the database for the production environment is the data the app would need for proper functioning.  We don't want "dev data" in our production database.  
+Rails maintains three different environments: development, test, and production.  The development environment is setup for us to write code and play around with our database as needed.  We'll put data in the database in ways that help us develop the app faster.  The test environment is specially for the automated tests to use.  We do not touch the test database.  The production environment is for when we deploy our app to a server for others to use.  The only data we want to add to  the database for the production environment is the data the app would need for proper functioning.  We don't want "dev data" in our production database.  
 
 We can achieve the goal of adding in dev data as we want, with keeping the production database clean with careful use of Ruby's database `db/seeds.rb` file.  The `seeds.rb` file is just Ruby code that is run when we execute the command `rails db:seed`.
 
