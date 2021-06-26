@@ -221,7 +221,7 @@ git push
 ```
 We will be checking for your "Yay" commit message, and so please use the message as per above.  
 
-I encourage you to go and check out your repository in GitHub, but please **never** directly edit any of your files via GitHub.  Please always edit them via your repository in Codio.  (If you do edit in GitHub, usually the correct fix is to do a `git pull` from Codio, but please, let's avoid the issue all together.)
+I encourage you to go and check out your repository in GitHub, but please **never** directly edit any of your files via GitHub.  Please always edit them via your repository in Codio.  (If you do edit in GitHub, usually the correct fix is to do a `git pull` from Codio, but please, let's avoid the issue altogether.)
 
 ### End of Lab
 
@@ -235,7 +235,7 @@ If you are not caught up on the course lectures, you should go watch them first 
 
 Our BasicBooks App is going to be very basic.  It will allow us to view books in the database, and to experiment with POSTing data.
 
-Well, we know that Rails apps are based on the MVC pattern (Model, View, Controller), and so it seems pretty sensible to figure out what the model(s), view(s), and controller(s) are going to be.  As you'll see as we go through this, we don't do them separately except for the model.  It works best for us to go back and forth between the controller and the views as we build the app.  This let's us test it as we progress in getting it up and running.  When we do development, we want to follow this process:
+Well, we know that Rails apps are based on the MVC pattern (Model, View, Controller), and so it seems pretty sensible to figure out what the model(s), view(s), and controller(s) are going to be.  As you'll see as we go through this, we don't do them separately except for the model.  It works best for us to go back and forth between the controller and the views as we build the app.  This lets us test it as we progress in getting it up and running.  When we do development, we want to follow this process:
 
 1. Write a bit of code or make a small change to the app.
 
