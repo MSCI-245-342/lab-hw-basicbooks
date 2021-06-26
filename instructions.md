@@ -461,7 +461,7 @@ Then do:
 ```
 Book.all.limit(2)
 ```
-To ask the Movie model for all of the movies.  Notice how this is turned into SQL for you: `SELECT "books".* FROM "books" LIMIT $1  [["LIMIT", 2]]`.
+To ask the Book model for all of the books.  Notice how this is turned into SQL for you: `SELECT "books".* FROM "books" LIMIT $1  [["LIMIT", 2]]`.
 
 To find the book with an id of 1, do:
 ```
@@ -477,7 +477,7 @@ To delete the book with id=1, do:
 ```
 Book.destroy(1)
 ```
-and then list the movies again to verify it is gone:
+and then list the books again to verify it is gone:
 ```
 Book.find_each { |b| puts b.title }
 ```
@@ -524,11 +524,11 @@ edit_book GET    /books/:id/edit(.:format) books#edit
 ```
 These are all important.  The GET /books route says it is handled by the books controller's index action.  It is considered the "default" handler, in that it is run when a user requests /books.  Usually, we have the index provide an overview of the resource, and often provide a list of the items.  For us, that would be a list of the books in the database.
 
-Notice the routes that include an ":id".  For example GET movies/1 will be a request to show the movie with id=1.  You can ignore the "(.:format)" in these routes.
+Notice the routes that include an ":id".  For example GET books/1 will be a request to show the book with id=1.  You can ignore the "(.:format)" in these routes.
 
 The "Prefix" means that Rails will make available in the controller, and the view, special helper methods that will return the path for the route.  For example there will be `books_path` and it will return "/books" and `new_book_path` will return "/books/new".  It is much better practice to call these helper methods rather than type the path directly.  In addition to these "_path" methods, there are also made "_url" methods, for example: books_url, new_book_url, etc.  These return the full url to the web page, for example: https://lola-concert-3000.codio.io/books .  We'll most often use the "_path" methods to produce relative paths.  The "_url" methods are used when we need to do a "redirect" in the controller.
 
-# A controller and views for movies.
+# A controller and views for books
 
 We can ask Rails to make us a controller with the actions we need.  For a resource controller, we also use the plural form of the resource.  Do:
 ```
@@ -717,7 +717,7 @@ Now, type `continue` to let the server finish processing the request.
 
 As mentioned before, being able to debug in this fashion is super powerful.  
 
-Okay, back to the show action and show view.  In the controller, let's get the movie requested:
+Okay, back to the show action and show view.  In the controller, let's get the book requested:
 ```ruby
 def show
       @book = Book.find params[:id] 
