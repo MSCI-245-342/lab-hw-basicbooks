@@ -1127,7 +1127,7 @@ When we receive a DELETE http request to a path like `/books/1`, it tells us the
 ```
 So, we should get what to do:
 + In BooksController#destroy, get the book with `params[:id]` from the database, and then destroy it.
-+ After destroying the book, we must `redirect_to` another page to avoid the user accidentally request to delete the book more than once.  
++ After destroying the book, we must `redirect_to` another page to avoid the user accidentally requesting to delete the book more than once.  
 
 Okay, so here is our code for the controller:
 ```ruby
