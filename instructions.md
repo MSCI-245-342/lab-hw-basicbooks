@@ -704,7 +704,7 @@ and we've been dropped into byebug.  To see what is in `params`, type `params` a
 (byebug) params
 #<ActionController::Parameters {"controller"=>"books", "action"=>"show", "id"=>"42"} permitted: false>
 ```
-So, we see that it knows the controller is books, and the action is show, and id has been set to 42.  Try typing `params[:id]` and `params["id"]
+So, we see that it knows the controller is books, and the action is show, and id has been set to 42.  Try typing `params[:id]` and `params["id"]`
 ```
 (byebug) params[:id]
 "42"
