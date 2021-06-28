@@ -1231,7 +1231,7 @@ The app still needs some finishing touches.  Complete the following tasks:
    + For example, if I was on the page `/books/1` for the book "Dune", at the bottom of that page would be a link with text "Delete Book".  When I click on the link, I would be on a new page, that asks me if I really want to delete "Dune".  If I click the "Delete" button, then "Dune" is deleted.  If I click instead on "Cancel Delete", I am taken back to the page for "Dune".
    + Hint: Both "create" and "update" actions have actions that generate a page with an HTML form that is then submitted to "create" and "update".  Why shouldn't "delete" get its own dedicated page to host the form that deletes a book? You can add a new route to the routes, for example: 
    ```ruby
-   get 'books/:id/confirm_delete', to: 'books#confirm_delete', as 'confirm_delete_book'
+   get 'books/:id/confirm_delete', to: 'books#confirm_delete', as: 'confirm_delete_book'
    ```
    + You will not use a `rails generate` command, for you already have a controller to use (BooksController).  You can manually create the views file you need in `/app/views/books`.
 
