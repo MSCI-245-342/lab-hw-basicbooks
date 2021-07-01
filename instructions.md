@@ -1259,7 +1259,7 @@ heroku apps:create basicbooks-watiamUsername
 ``` 
 to create a new project in Heroku.  Replace "watiamUsername" with your WatIAM username.  This will tell the Heroku service to prepare for some incoming code, and locally it will add a remote git repository for you called `heroku`.  Detailed [instructions](https://devcenter.heroku.com/articles/creating-apps).
 
-Before doing anything else, record the URL that Heroku provides telling you where to access your app on the web.
+Before doing anything else, record the URL that Heroku provides telling you where to access your app on the web.  You want the url that ends with `herokuapp.com` and not the `git` url.
 
 Next, make sure you stage and commit all changes locally as instructed above (i.e. `git add`, `git commit`, `git push`).
 
