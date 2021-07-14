@@ -20,7 +20,7 @@ This assignment is part lab and part homework.  You are expected to work with yo
 
 Rails is an industrial strength web framework.  Shopify is built with Rails.  GitHub is built with Rails.  Airbnb is on Rails.  And so forth.
 
-With this power comes an additional does of complexity.  The complexity comes from Rails having many moving parts, and from the enforcement of the model-view-controller (MVC) design pattern.  MVC is extremely useful for managing the design of apps, but it will seem strange at first, and it will be challenging to keep track of everything that is going on.
+With this power comes an additional dose of complexity.  The complexity comes from Rails having many moving parts, and from the enforcement of the model-view-controller (MVC) design pattern.  MVC is extremely useful for managing the design of apps, but it will seem strange at first, and it will be challenging to keep track of everything that is going on.
 
 While I will try to guide you in the most efficient manner to learning the critical bits you need to know, there is a tremendous amount of knowledge needed to become a successful engineer of web apps with a web framework.  You will need to develop an ability to turn to other books, manuals, and websites to learn what you need to know.  This is the life of a professional engineer.  The professional engineer always needs to learn more, and you must develop the ability to learn from reading and then doing.
 
